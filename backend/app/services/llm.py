@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 from collections.abc import AsyncGenerator
 
 import litellm
@@ -9,6 +10,7 @@ import litellm
 from app.models_registry import ModelEntry
 
 litellm.drop_params = True
+logger = logging.getLogger(__name__)
 
 
 async def _stream_one(
@@ -27,6 +29,7 @@ async def _stream_one(
     if model_entry.api_base:
         kwargs["api_base"] = model_entry.api_base
 
+    logger.info("[%s] Starting stream for model=%s", panel, model_entry.id)
     try:
         response = await litellm.acompletion(**kwargs)
         async for chunk in response:
@@ -35,6 +38,7 @@ async def _stream_one(
                 payload = json.dumps({"panel": panel, "delta": delta})
                 yield f"data: {payload}\n\n"
     except Exception as exc:
+        logger.error("[%s] LiteLLM error for model=%s: %s", panel, model_entry.id, exc)
         error_payload = json.dumps({"panel": panel, "error": str(exc)})
         yield f"data: {error_payload}\n\n"
 
