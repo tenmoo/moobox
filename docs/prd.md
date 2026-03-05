@@ -4,10 +4,10 @@
 
 MooBox is a side-by-side AI model comparison sandbox that enables internal teams to qualitatively evaluate in-house LLM models against frontier models. Users send one prompt and see two models respond simultaneously in real time, facilitating rapid qualitative assessment of model quality, tone, accuracy, and latency.
 
-
 ## 2. Problem Statement
 
 Teams developing and fine-tuning in-house LLMs face several challenges when evaluating model quality:
+
 - Comparing model outputs requires manually switching between different UIs, terminals, or API clients
 - There is no standardized way for non-technical stakeholders to explore model behavior side-by-side
 - Qualitative differences between models (tone, reasoning depth, formatting) are hard to assess without direct visual comparison
@@ -29,11 +29,12 @@ MooBox aims to be the internal team's go-to tool for qualitative LLM exploration
 
 ### User Personas
 
-| Persona | Goal | Example Prompt |
-|---------|------|----------------|
-| ML Engineer | "Compare my fine-tuned 7B against GPT-4o on coding tasks" | "Write a Python function to merge two sorted lists" |
-| Product Manager | "See how our model handles customer-facing language" | "Draft a friendly email declining a refund request" |
-| QA Evaluator | "Spot-check reasoning quality across providers" | "Explain step by step why the sky is blue" |
+
+| Persona         | Goal                                                      | Example Prompt                                      |
+| --------------- | --------------------------------------------------------- | --------------------------------------------------- |
+| ML Engineer     | "Compare my fine-tuned 7B against GPT-4o on coding tasks" | "Write a Python function to merge two sorted lists" |
+| Product Manager | "See how our model handles customer-facing language"      | "Draft a friendly email declining a refund request" |
+| QA Evaluator    | "Spot-check reasoning quality across providers"           | "Explain step by step why the sky is blue"          |
 
 
 ## 5. Core Features
@@ -103,6 +104,7 @@ LiteLLM provides a single interface to 100+ LLM providers:
 ### 7.2 Technology Stack
 
 #### Backend
+
 - **Framework**: FastAPI 0.115.6
 - **Language**: Python 3.11+
 - **LLM Gateway**: LiteLLM 1.57.2 (unified multi-provider interface)
@@ -112,6 +114,7 @@ LiteLLM provides a single interface to 100+ LLM providers:
 - **Server**: Uvicorn with async support
 
 #### Frontend
+
 - **Framework**: Next.js 16 (App Router)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS v4 + shadcn/ui component library
@@ -119,6 +122,7 @@ LiteLLM provides a single interface to 100+ LLM providers:
 - **SSE Client**: Native `fetch()` with `ReadableStream` for SSE parsing
 
 #### Deployment
+
 - **Docker**: Multi-stage Dockerfiles for both services
 - **docker-compose**: Single-command local dev and deployment
 - **Backend**: standalone Uvicorn container on port 8000
@@ -158,41 +162,44 @@ LiteLLM provides a single interface to 100+ LLM providers:
 - Model pairs most frequently compared
 - Qualitative feedback from evaluation teams (future: structured ratings)
 
-
 ## 10. Phases & Roadmap
 
-| Phase | Scope | Status |
-|-------|-------|--------|
-| **Phase 1** | Backend scaffold: FastAPI, LiteLLM, model registry, SSE streaming | Done |
-| **Phase 2** | Frontend: Next.js, side-by-side UI, SSE client, model selectors | Done |
-| **Phase 3** | Docker: Dockerfiles, docker-compose, standalone Next.js output | Done |
-| **Phase 4** | Blind evaluation / voting (hide model names, user picks winner) | Planned |
-| **Phase 5** | Parameter tuning UI (temperature, top-p, system prompt per model) | Planned |
-| **Phase 6** | Persistent conversation history (database-backed sessions) | Planned |
+
+| Phase       | Scope                                                                 | Status  |
+| ----------- | --------------------------------------------------------------------- | ------- |
+| **Phase 1** | Backend scaffold: FastAPI, LiteLLM, model registry, SSE streaming     | Done    |
+| **Phase 2** | Frontend: Next.js, side-by-side UI, SSE client, model selectors       | Done    |
+| **Phase 3** | Docker: Dockerfiles, docker-compose, standalone Next.js output        | Done    |
+| **Phase 4** | Blind evaluation / voting (hide model names, user picks winner)       | Planned |
+| **Phase 5** | Parameter tuning UI (temperature, top-p, system prompt per model)     | Planned |
+| **Phase 6** | Persistent conversation history (database-backed sessions)            | Planned |
 | **Phase 7** | Structured ratings & export (thumbs up/down, Likert, CSV/JSON export) | Planned |
-| **Phase 8** | Auth / user identity (track who evaluated what) | Planned |
+| **Phase 8** | Auth / user identity (track who evaluated what)                       | Planned |
+
 
 ## 11. Open Questions & Risks
 
 ### Questions Addressed
 
-- [x] LLM gateway approach → LiteLLM for unified multi-provider access
-- [x] Streaming protocol → SSE with panel-tagged multiplexing
-- [x] Model configuration → YAML-based registry with env var references
+- LLM gateway approach → LiteLLM for unified multi-provider access
+- Streaming protocol → SSE with panel-tagged multiplexing
+- Model configuration → YAML-based registry with env var references
 
 ### Remaining Questions
 
-- [ ] Should blind evaluation randomize panel assignment per prompt?
-- [ ] How to handle models with very different response latencies (one finishes much earlier)?
-- [ ] Database choice for persistent conversation history (PostgreSQL vs SQLite)?
+- Should blind evaluation randomize panel assignment per prompt?
+- How to handle models with very different response latencies (one finishes much earlier)?
+- Database choice for persistent conversation history (PostgreSQL vs SQLite)?
 
 ### Risks & Mitigation
 
-| Risk | Mitigation |
-|------|------------|
-| Model provider outage | Per-panel error handling; one panel can fail independently |
-| LiteLLM version incompatibility | Pin version in requirements.txt; test upgrades |
+
+| Risk                            | Mitigation                                                   |
+| ------------------------------- | ------------------------------------------------------------ |
+| Model provider outage           | Per-panel error handling; one panel can fail independently   |
+| LiteLLM version incompatibility | Pin version in requirements.txt; test upgrades               |
 | High latency on in-house models | Streaming mitigates perceived wait; show time-to-first-token |
+
 
 ## 12. Constraints
 
@@ -230,6 +237,9 @@ See the [LICENSE](/LICENSE) file for details.
 
 ## Document Control
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 0.1.0 | 2026-03-03 | Initial implementation; PRD reflects built v1 features |
+
+| Version | Date       | Changes                                                |
+| ------- | ---------- | ------------------------------------------------------ |
+| 0.1.0   | 2026-03-03 | Initial implementation; PRD reflects built v1 features |
+
+
