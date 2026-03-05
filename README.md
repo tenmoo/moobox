@@ -2,7 +2,7 @@
 
 Side-by-side AI model comparison sandbox for internal teams. Send one prompt, see two models respond in real time.
 
-![MooBox](docs/Moobox.png)
+![MooBox](docs/MooBox.png)
 
 ## Architecture
 
