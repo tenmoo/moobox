@@ -2,6 +2,8 @@
 
 Side-by-side AI model comparison sandbox for internal teams. Send one prompt, see two models respond in real time.
 
+![MooBox](docs/Moobox.png)
+
 ## Architecture
 
 - **Backend** — Python / FastAPI with [LiteLLM](https://github.com/BerriAI/litellm) for unified multi-provider streaming
