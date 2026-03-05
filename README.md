@@ -1,6 +1,6 @@
 # MooBox
 
-Side-by-side AI model comparison sandbox for internal teams. Send one prompt, see two models respond in real time.
+Side-by-side AI model comparison sandbox for model evaulation and exploration. Send one prompt, see two models respond in real time.
 
 ![MooBox](docs/MooBox.png)
 
