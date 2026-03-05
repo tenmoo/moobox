@@ -1,20 +1,40 @@
 models:
+  # Groq (free tier available — https://console.groq.com)
+  - id: "groq/llama-3.3-70b-versatile"
+    name: "Llama 3.3 70B"
+    provider: "groq"
+    api_key_env: "GROQ_API_KEY"
+
+  - id: "groq/llama-3.1-8b-instant"
+    name: "Llama 3.1 8B"
+    provider: "groq"
+    api_key_env: "GROQ_API_KEY"
+
+  - id: "groq/openai/gpt-oss-120b"
+    name: "GPT-OSS 120B"
+    provider: "groq"
+    api_key_env: "GROQ_API_KEY"
+
+  # In-house model (OpenAI-compatible endpoint)
   - id: "internal/moo-7b"
     name: "Moo 7B"
     provider: "openai"
     api_base_env: "INTERNAL_API_BASE"
     api_key_env: "INTERNAL_API_KEY"
 
+  # OpenAI (requires billing — https://platform.openai.com)
   - id: "gpt-4o"
     name: "GPT-4o"
     provider: "openai"
     api_key_env: "OPENAI_API_KEY"
 
+  # Anthropic (requires billing — https://console.anthropic.com)
   - id: "claude-sonnet-4-20250514"
     name: "Claude Sonnet"
     provider: "anthropic"
     api_key_env: "ANTHROPIC_API_KEY"
 
+  # Google (free tier available — https://aistudio.google.com)
   - id: "gemini/gemini-2.0-flash"
     name: "Gemini 2.0 Flash"
     provider: "gemini"
