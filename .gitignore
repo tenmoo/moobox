@@ -1,0 +1,5 @@
+.env
+backend/.venv
+backend/app/__pycache__
+backend/app/routers/__pycache__
+backend/app/services/__pycache__
