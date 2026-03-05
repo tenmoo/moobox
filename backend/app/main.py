@@ -1,7 +1,10 @@
+import warnings
 from contextlib import asynccontextmanager
 from pathlib import Path
 
 from dotenv import load_dotenv
+
+warnings.filterwarnings("ignore", message="Pydantic serializer warnings")
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
