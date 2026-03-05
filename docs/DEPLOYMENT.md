@@ -30,6 +30,7 @@ cp backend/.env.example backend/.env
 
 Edit `backend/.env` with your production API keys:
 ```env
+GROQ_API_KEY=gsk_prod-groq-key
 OPENAI_API_KEY=sk-prod-key
 ANTHROPIC_API_KEY=sk-ant-prod-key
 GOOGLE_API_KEY=prod-google-key
@@ -126,6 +127,7 @@ vercel --prod
 
 | Variable | Required | Description |
 |----------|----------|-------------|
+| `GROQ_API_KEY` | Per model | Groq API key (free tier available) |
 | `OPENAI_API_KEY` | Per model | OpenAI API key |
 | `ANTHROPIC_API_KEY` | Per model | Anthropic API key |
 | `GOOGLE_API_KEY` | Per model | Google AI API key |

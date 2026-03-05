@@ -69,11 +69,12 @@
                      ┌────────────────────────┼────────────────────────┐
                      │                        │                        │
             ┌────────▼────────┐    ┌──────────▼──────────┐   ┌────────▼────────┐
-            │  In-House Model │    │   OpenAI / Anthropic │   │  Google Gemini  │
-            │  (OpenAI-compat)│    │   (native APIs)      │   │  (native API)   │
-            │                 │    │                      │   │                 │
-            │ vLLM / TGI /   │    │ gpt-4o               │   │ gemini-2.0-flash│
-            │ LiteLLM proxy  │    │ claude-sonnet-4       │   │                 │
+            │  Groq / In-House│    │   OpenAI / Anthropic │   │  Google Gemini  │
+            │                 │    │   (native APIs)      │   │  (native API)   │
+            │ Llama 3.3 70B  │    │                      │   │                 │
+            │ Llama 3.1 8B   │    │ gpt-4o               │   │ gemini-2.0-flash│
+            │ GPT-OSS 120B   │    │ claude-sonnet-4       │   │                 │
+            │ Moo 7B (custom)│    │                      │   │                 │
             └─────────────────┘    └──────────────────────┘   └─────────────────┘
 ```
 
@@ -133,6 +134,7 @@ User sees both responses streaming simultaneously
 │                    Presentation Layer                            │
 │  • Next.js 16 App Router (React Client Components)              │
 │  • Tailwind CSS v4 + shadcn/ui component library                │
+│  • Markdown rendering (react-markdown + remark-gfm)             │
 │  • Responsive: side-by-side (desktop) / stacked (mobile)        │
 └─────────────────────────┬───────────────────────────────────────┘
                           │
@@ -157,7 +159,7 @@ User sees both responses streaming simultaneously
 ┌─────────────────────────▼───────────────────────────────────────┐
 │                    LLM Gateway Layer (LiteLLM)                  │
 │  • litellm.acompletion() for async streaming completions        │
-│  • Unified interface: OpenAI, Anthropic, Gemini, custom         │
+│  • Unified interface: Groq, OpenAI, Anthropic, Gemini, custom   │
 │  • Per-model api_key and api_base from registry                 │
 │  • asyncio.Queue for parallel stream multiplexing               │
 │  • Per-panel error isolation                                    │
@@ -191,17 +193,19 @@ User sees both responses streaming simultaneously
                                           │
                                ┌──────────┼───────────┐
                                │          │           │
-                      ┌────────▼──┐  ┌────▼─────┐  ┌─▼──────────┐
-                      │ In-House  │  │ OpenAI / │  │ Google     │
-                      │ Models    │  │ Anthropic│  │ Gemini     │
-                      └───────────┘  └──────────┘  └────────────┘
+                    ┌──────┼──────────┼───────────┐
+                    │      │          │           │
+           ┌────────▼──┐ ┌─▼────────┐ ┌▼─────────┐ ┌▼──────────┐
+           │ Groq /    │ │ OpenAI / │ │ Google   │ │ In-House  │
+           │ Open      │ │ Anthropic│ │ Gemini   │ │ Models    │
+           └───────────┘ └──────────┘ └──────────┘ └───────────┘
 ```
 
 ---
 
 This architecture provides:
 - **Side-by-side streaming**: Two models compared in real time with a single prompt
-- **Provider-agnostic**: LiteLLM unifies OpenAI, Anthropic, Google, and any OpenAI-compatible endpoint
+- **Provider-agnostic**: LiteLLM unifies Groq, OpenAI, Anthropic, Google, and any OpenAI-compatible endpoint
 - **Zero-code model management**: YAML registry for adding/removing models
 - **Error isolation**: One panel can fail without affecting the other
 - **Responsive UI**: shadcn/ui + Tailwind for a modern, accessible interface

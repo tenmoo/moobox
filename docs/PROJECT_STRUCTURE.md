@@ -73,13 +73,14 @@ moobox/
 
 #### `app/config.py`
 Application configuration:
-- `Settings` class via pydantic-settings
+- `Settings` class via pydantic-settings with `extra = "ignore"` (tolerates unrelated env vars)
 - `cors_origins` — comma-separated allowed origins (default: `http://localhost:3000`)
 - `models_file` — path to model registry YAML (default: `models.yaml`)
 - Automatic `.env` file loading
 
 #### `app/main.py`
 FastAPI entry point:
+- Suppresses harmless Pydantic serializer warnings from LiteLLM
 - Lifespan handler loads `models.yaml` into `app.state.registry` at startup
 - CORS middleware configured from `settings.cors_origin_list`
 - Includes routers with `/api` prefix
@@ -96,7 +97,7 @@ YAML-based model registry:
 Chat SSE streaming endpoint:
 - `POST /api/chat` — accepts `ChatRequest` (messages, left_model, right_model)
 - Validates both model IDs against registry (404 if not found)
-- Returns `EventSourceResponse` wrapping `stream_dual()`
+- Returns `StreamingResponse` with `Cache-Control: no-cache` and `X-Accel-Buffering: no` headers
 
 #### `app/routers/models.py`
 Model listing endpoint:
@@ -107,11 +108,15 @@ LiteLLM streaming service:
 - `_stream_one(model_entry, messages, panel)` — streams completions from a single model, yielding panel-tagged SSE events
 - `stream_dual(left_entry, right_entry, messages)` — runs two `_stream_one` producers in parallel via `asyncio.Queue`, multiplexes into a single SSE stream
 - Per-model error handling: exceptions become `{"panel": "...", "error": "..."}`
+- Structured logging: info on stream start, error on LiteLLM failures
 - Terminates with `data: [DONE]`
 
 #### `models.yaml`
 Model registry configuration:
-- 4 pre-configured models: internal Moo 7B, GPT-4o, Claude Sonnet, Gemini 2.0 Flash
+- 7 pre-configured models:
+  - Groq: Llama 3.3 70B, Llama 3.1 8B, GPT-OSS 120B (free tier)
+  - In-house: Moo 7B (OpenAI-compatible endpoint)
+  - Frontier: GPT-4o (OpenAI), Claude Sonnet (Anthropic), Gemini 2.0 Flash (Google)
 - Each entry: `id`, `name`, `provider`, `api_key_env`, optional `api_base_env`
 
 ### Frontend Files
@@ -138,8 +143,9 @@ Scrollable message panel:
 
 #### `src/components/MessageBubble.tsx`
 Message display:
-- User messages: right-aligned, primary background
-- Assistant messages: left-aligned, muted background
+- User messages: right-aligned, primary background, plain text
+- Assistant messages: left-aligned, muted background, rendered as Markdown via `react-markdown` + `remark-gfm` (headings, bold, code blocks, lists, tables, links)
+- Tailwind Typography (`prose`) classes for consistent Markdown styling
 - Streaming cursor: animated pulse indicator on last assistant message
 
 #### `src/components/ModelSelector.tsx`
@@ -183,7 +189,8 @@ python-dotenv==1.0.1
 #### `frontend/package.json`
 Key dependencies:
 - next, react, react-dom
-- tailwindcss, @tailwindcss/postcss
+- tailwindcss, @tailwindcss/postcss, @tailwindcss/typography
+- react-markdown, remark-gfm
 - shadcn/ui components (button, card, scroll-area, select)
 - typescript, eslint
 
@@ -191,6 +198,9 @@ Key dependencies:
 
 ### Backend (`.env`)
 ```env
+# Groq (free tier — https://console.groq.com)
+GROQ_API_KEY=gsk_your-groq-api-key
+
 # In-house model (OpenAI-compatible endpoint)
 INTERNAL_API_KEY=your-internal-api-key
 INTERNAL_API_BASE=http://internal-gpu-server:8000/v1

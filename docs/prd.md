@@ -55,6 +55,7 @@ Models are configured in `backend/models.yaml` — no code changes needed to add
 
 - Each entry specifies: `id`, `name`, `provider`, `api_key_env`, and optional `api_base_env`
 - In-house models use `provider: "openai"` with a custom `api_base_env` pointing to the internal endpoint
+- Groq models use `provider: "groq"` for fast, free-tier inference
 - Frontier models use their native provider keys (`openai`, `anthropic`, `gemini`)
 - API keys are referenced by environment variable name, never stored in the YAML
 
@@ -63,7 +64,7 @@ Models are configured in `backend/models.yaml` — no code changes needed to add
 LiteLLM provides a single interface to 100+ LLM providers:
 
 - **OpenAI-compatible endpoints**: In-house models served via vLLM, TGI, or LiteLLM proxy connect natively
-- **Native provider support**: OpenAI, Anthropic, Google Gemini, and others work out of the box
+- **Native provider support**: Groq, OpenAI, Anthropic, Google Gemini, and others work out of the box
 - **Streaming**: Async streaming via `litellm.acompletion()` with `stream=True`
 - **Error isolation**: Per-model error handling — if one model fails, the other panel continues streaming
 
@@ -74,7 +75,7 @@ LiteLLM provides a single interface to 100+ LLM providers:
 - **Header**: App title ("MooBox") and "New chat" button
 - **ModelSelector**: Two dropdowns (left/right) populated from `GET /api/models`
 - **ChatPanel**: Scrollable message list per model with auto-scroll on new content
-- **MessageBubble**: User messages (right-aligned, primary color) and assistant messages (left-aligned, muted)
+- **MessageBubble**: User messages (right-aligned, primary color) and assistant messages (left-aligned, muted) with Markdown rendering (headings, code blocks, lists, tables)
 - **PromptInput**: Shared textarea with Send button; Enter to send, Shift+Enter for new line
 
 ### 6.2 User Flow
@@ -108,7 +109,7 @@ LiteLLM provides a single interface to 100+ LLM providers:
 - **Framework**: FastAPI 0.115.6
 - **Language**: Python 3.11+
 - **LLM Gateway**: LiteLLM 1.57.2 (unified multi-provider interface)
-- **Streaming**: sse-starlette 2.2.1 for `EventSourceResponse`
+- **Streaming**: FastAPI `StreamingResponse` with manual SSE framing
 - **Configuration**: pydantic-settings 2.7.1 for type-safe env loading
 - **Model Registry**: PyYAML 6.0.2 for `models.yaml` parsing
 - **Server**: Uvicorn with async support
@@ -117,7 +118,8 @@ LiteLLM provides a single interface to 100+ LLM providers:
 
 - **Framework**: Next.js 16 (App Router)
 - **Language**: TypeScript
-- **Styling**: Tailwind CSS v4 + shadcn/ui component library
+- **Styling**: Tailwind CSS v4 + shadcn/ui component library + @tailwindcss/typography
+- **Markdown**: react-markdown with remark-gfm for assistant response rendering
 - **State Management**: React `useState` / `useRef` hooks
 - **SSE Client**: Native `fetch()` with `ReadableStream` for SSE parsing
 
@@ -145,7 +147,7 @@ LiteLLM provides a single interface to 100+ LLM providers:
 ### 8.2 Privacy
 
 - **User data**: Prompts and responses exist only in the browser and in-flight to model providers
-- **Third-party**: Prompts are sent to whichever LLM providers are configured (OpenAI, Anthropic, Google, or internal endpoints)
+- **Third-party**: Prompts are sent to whichever LLM providers are configured (Groq, OpenAI, Anthropic, Google, or internal endpoints)
 - **Recommendation**: Add auth and audit logging before production deployment
 
 ## 9. Success Metrics
@@ -241,5 +243,6 @@ See the [LICENSE](/LICENSE) file for details.
 | Version | Date       | Changes                                                |
 | ------- | ---------- | ------------------------------------------------------ |
 | 0.1.0   | 2026-03-03 | Initial implementation; PRD reflects built v1 features |
+| 0.2.0   | 2026-03-05 | Added Groq models, Markdown rendering, streaming fix, logging |
 
 

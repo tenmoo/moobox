@@ -26,6 +26,21 @@ List all available models from the registry.
 {
   "models": [
     {
+      "id": "groq/llama-3.3-70b-versatile",
+      "name": "Llama 3.3 70B",
+      "provider": "groq"
+    },
+    {
+      "id": "groq/llama-3.1-8b-instant",
+      "name": "Llama 3.1 8B",
+      "provider": "groq"
+    },
+    {
+      "id": "groq/openai/gpt-oss-120b",
+      "name": "GPT-OSS 120B",
+      "provider": "groq"
+    },
+    {
       "id": "internal/moo-7b",
       "name": "Moo 7B",
       "provider": "openai"
@@ -176,8 +191,8 @@ curl -N -X POST http://localhost:8000/api/chat \
   -H "Content-Type: application/json" \
   -d '{
     "messages": [{"role": "user", "content": "What is recursion?"}],
-    "left_model": "gpt-4o",
-    "right_model": "claude-sonnet-4-20250514"
+    "left_model": "groq/llama-3.3-70b-versatile",
+    "right_model": "groq/llama-3.1-8b-instant"
   }'
 ```
 
@@ -198,8 +213,8 @@ response = requests.post(
     "http://localhost:8000/api/chat",
     json={
         "messages": [{"role": "user", "content": "What is recursion?"}],
-        "left_model": "gpt-4o",
-        "right_model": "claude-sonnet-4-20250514",
+        "left_model": "groq/llama-3.3-70b-versatile",
+        "right_model": "groq/llama-3.1-8b-instant",
     },
     stream=True,
 )

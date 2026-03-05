@@ -5,6 +5,35 @@ All notable changes to the MooBox project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-03-05
+
+### Added
+
+#### Backend
+- Groq provider support with 3 models: Llama 3.3 70B, Llama 3.1 8B, GPT-OSS 120B
+- `GROQ_API_KEY` environment variable for Groq API access
+- Structured logging in LLM service (stream start info, error details)
+
+#### Frontend
+- Markdown rendering for assistant messages via `react-markdown` + `remark-gfm`
+- Tailwind Typography plugin (`@tailwindcss/typography`) for prose styling
+- Headings, code blocks, lists, tables, and links render correctly in chat
+
+### Changed
+
+#### Backend
+- Replaced `EventSourceResponse` (sse-starlette) with `StreamingResponse` (FastAPI native) to fix double SSE wrapping
+- Added `Cache-Control: no-cache` and `X-Accel-Buffering: no` response headers for reliable streaming
+- Suppressed harmless Pydantic serializer warnings from LiteLLM
+- Added `extra = "ignore"` to pydantic-settings `Config` to tolerate extra env vars
+- Model registry expanded from 4 to 7 models (3 Groq + 4 original)
+
+### Fixed
+- SSE streaming now works correctly (was double-wrapping `data:` events)
+- Backend no longer crashes on unrecognized environment variables
+
+---
+
 ## [0.1.0] - 2026-03-03
 
 ### Added

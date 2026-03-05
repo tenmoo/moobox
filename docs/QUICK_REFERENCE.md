@@ -53,8 +53,8 @@ curl -N -X POST http://localhost:8000/api/chat \
   -H "Content-Type: application/json" \
   -d '{
     "messages": [{"role": "user", "content": "What is recursion?"}],
-    "left_model": "gpt-4o",
-    "right_model": "claude-sonnet-4-20250514"
+    "left_model": "groq/llama-3.3-70b-versatile",
+    "right_model": "groq/llama-3.1-8b-instant"
   }'
 ```
 
@@ -203,6 +203,9 @@ pip install -r requirements.txt
 ### Backend (.env)
 
 ```env
+# Groq (free tier — recommended for getting started)
+GROQ_API_KEY=gsk_your-groq-api-key
+
 # Provider API Keys (set the ones you need)
 OPENAI_API_KEY=sk-your-openai-key
 ANTHROPIC_API_KEY=sk-ant-your-anthropic-key

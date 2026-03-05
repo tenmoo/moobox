@@ -11,6 +11,7 @@ Before you begin, ensure you have the following installed:
 - **Git**: [Download here](https://git-scm.com/)
 
 You'll also need API keys for at least one LLM provider:
+- **Groq** (recommended — free tier): [Get a key](https://console.groq.com)
 - OpenAI: [Get a key](https://platform.openai.com/api-keys)
 - Anthropic: [Get a key](https://console.anthropic.com/)
 - Google AI: [Get a key](https://aistudio.google.com/apikey)
@@ -60,7 +61,10 @@ cp .env.example .env
 
 2. Edit `.env` and add your API keys for the providers you want to use:
 ```env
-# At least one of these is needed for the corresponding model to work:
+# Groq (free tier — recommended for getting started)
+GROQ_API_KEY=gsk_your-groq-api-key
+
+# Optional: add any providers you have keys for
 OPENAI_API_KEY=sk-your-openai-key
 ANTHROPIC_API_KEY=sk-ant-your-anthropic-key
 GOOGLE_API_KEY=your-google-api-key
@@ -74,19 +78,19 @@ INTERNAL_API_BASE=http://your-gpu-server:8000/v1
 
 ### 2.5 Configure Model Registry
 
-The default `models.yaml` includes 4 models. Edit it to match your available providers:
+The default `models.yaml` includes 7 models across 5 providers. The three Groq models work with a free API key. Edit it to match your available providers:
 
 ```yaml
 models:
+  - id: "groq/llama-3.3-70b-versatile"
+    name: "Llama 3.3 70B"
+    provider: "groq"
+    api_key_env: "GROQ_API_KEY"
+
   - id: "gpt-4o"
     name: "GPT-4o"
     provider: "openai"
     api_key_env: "OPENAI_API_KEY"
-
-  - id: "claude-sonnet-4-20250514"
-    name: "Claude Sonnet"
-    provider: "anthropic"
-    api_key_env: "ANTHROPIC_API_KEY"
 ```
 
 Remove any models you don't have API keys for, or they'll return errors in the chat panel.
@@ -198,7 +202,7 @@ List exactly 5 tips for writing clean code. Number each one.
 
 ### Backend Issues
 
-**Error: "No module named 'fastapi'"**
+**Error: "No module named 'fastapi'" or "No module named 'pydantic_settings'"**
 - Make sure your virtual environment is activated
 - Run `pip install -r requirements.txt` again
 
