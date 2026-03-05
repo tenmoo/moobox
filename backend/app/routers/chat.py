@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-from sse_starlette.sse import EventSourceResponse
 
 from app.services.llm import stream_dual
 
@@ -32,7 +32,8 @@ async def chat(request: Request, body: ChatRequest):
 
     messages = [m.model_dump() for m in body.messages]
 
-    return EventSourceResponse(
+    return StreamingResponse(
         stream_dual(left_entry, right_entry, messages),
         media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )
