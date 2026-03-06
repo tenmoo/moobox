@@ -3,15 +3,17 @@
 import { useEffect, useRef } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MessageBubble } from "./MessageBubble";
-import { Message } from "@/lib/types";
+import { LatencyBar } from "./LatencyBar";
+import { LatencyMetrics, Message } from "@/lib/types";
 
 interface ChatPanelProps {
   modelName: string;
   messages: Message[];
   isStreaming: boolean;
+  metrics?: LatencyMetrics | null;
 }
 
-export function ChatPanel({ modelName, messages, isStreaming }: ChatPanelProps) {
+export function ChatPanel({ modelName, messages, isStreaming, metrics }: ChatPanelProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -20,8 +22,9 @@ export function ChatPanel({ modelName, messages, isStreaming }: ChatPanelProps) 
 
   return (
     <div className="flex flex-col h-full min-h-0">
-      <div className="shrink-0 border-b px-4 py-2">
+      <div className="shrink-0 border-b px-4 py-2 flex items-center justify-between gap-2">
         <h3 className="text-sm font-semibold truncate">{modelName}</h3>
+        {metrics && <LatencyBar metrics={metrics} />}
       </div>
       <ScrollArea className="flex-1 min-h-0">
         <div className="flex flex-col gap-3 p-4">

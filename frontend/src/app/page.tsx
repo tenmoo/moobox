@@ -6,7 +6,7 @@ import { ChatPanel } from "@/components/ChatPanel";
 import { ModelSelector } from "@/components/ModelSelector";
 import { PromptInput } from "@/components/PromptInput";
 import { fetchModels, streamChat } from "@/lib/api";
-import { Message, ModelInfo } from "@/lib/types";
+import { LatencyMetrics, Message, ModelInfo } from "@/lib/types";
 
 export default function Home() {
   const [models, setModels] = useState<ModelInfo[]>([]);
@@ -15,6 +15,8 @@ export default function Home() {
   const [leftMessages, setLeftMessages] = useState<Message[]>([]);
   const [rightMessages, setRightMessages] = useState<Message[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [leftMetrics, setLeftMetrics] = useState<LatencyMetrics | null>(null);
+  const [rightMetrics, setRightMetrics] = useState<LatencyMetrics | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const conversationRef = useRef<Message[]>([]);
 
@@ -42,6 +44,8 @@ export default function Home() {
 
       setLeftMessages((prev) => [...prev, userMsg]);
       setRightMessages((prev) => [...prev, userMsg]);
+      setLeftMetrics(null);
+      setRightMetrics(null);
       setIsStreaming(true);
 
       const leftAssistant: Message = { role: "assistant", content: "" };
@@ -61,6 +65,11 @@ export default function Home() {
             right_model: rightModel,
           },
           (delta) => {
+            if (delta.metrics) {
+              if (delta.panel === "left") setLeftMetrics(delta.metrics);
+              else setRightMetrics(delta.metrics);
+              return;
+            }
             if (delta.panel === "left") {
               if (delta.error) {
                 leftAssistant.content += `\n[Error: ${delta.error}]`;
@@ -108,6 +117,8 @@ export default function Home() {
     abortRef.current?.abort();
     setLeftMessages([]);
     setRightMessages([]);
+    setLeftMetrics(null);
+    setRightMetrics(null);
     setIsStreaming(false);
     conversationRef.current = [];
   }, []);
@@ -157,6 +168,7 @@ export default function Home() {
             modelName={leftName}
             messages={leftMessages}
             isStreaming={isStreaming}
+            metrics={leftMetrics}
           />
         </Card>
         <Card className="rounded-none border-0 flex flex-col min-h-0">
@@ -164,6 +176,7 @@ export default function Home() {
             modelName={rightName}
             messages={rightMessages}
             isStreaming={isStreaming}
+            metrics={rightMetrics}
           />
         </Card>
       </div>

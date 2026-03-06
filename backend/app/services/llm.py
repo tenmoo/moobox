@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import time
 from collections.abc import AsyncGenerator
 
 import litellm
@@ -30,17 +31,38 @@ async def _stream_one(
         kwargs["api_base"] = model_entry.api_base
 
     logger.info("[%s] Starting stream for model=%s", panel, model_entry.id)
+    t0 = time.monotonic()
+    ttft: float | None = None
+    token_count = 0
+
     try:
         response = await litellm.acompletion(**kwargs)
         async for chunk in response:
             delta = chunk.choices[0].delta.content
             if delta:
+                if ttft is None:
+                    ttft = time.monotonic() - t0
+                token_count += 1
                 payload = json.dumps({"panel": panel, "delta": delta})
                 yield f"data: {payload}\n\n"
     except Exception as exc:
         logger.error("[%s] LiteLLM error for model=%s: %s", panel, model_entry.id, exc)
         error_payload = json.dumps({"panel": panel, "error": str(exc)})
         yield f"data: {error_payload}\n\n"
+
+    total_s = time.monotonic() - t0
+    tps = token_count / total_s if total_s > 0 else 0
+    metrics = {
+        "panel": panel,
+        "metrics": {
+            "ttft_ms": round((ttft or total_s) * 1000),
+            "total_ms": round(total_s * 1000),
+            "token_count": token_count,
+            "tokens_per_sec": round(tps, 1),
+        },
+    }
+    logger.info("[%s] Finished model=%s %s", panel, model_entry.id, metrics["metrics"])
+    yield f"data: {json.dumps(metrics)}\n\n"
 
 
 async def stream_dual(

@@ -19,4 +19,12 @@ export interface StreamDelta {
   panel: "left" | "right";
   delta?: string;
   error?: string;
+  metrics?: LatencyMetrics;
+}
+
+export interface LatencyMetrics {
+  ttft_ms: number;
+  total_ms: number;
+  token_count: number;
+  tokens_per_sec: number;
 }
