@@ -282,19 +282,7 @@ Once persistence and ratings are in place:
 - User authentication and team-based access control
 - Multi-model arena (3+ models simultaneously)
 
-## AI Assistance Disclosure
-
-Portions of this project were developed with the assistance of AI-based tools. 
-All generated code was reviewed, modified, and validated by the author.
-
-## License
-
-This project is licensed under the Apache License 2.0.
-
-See the [LICENSE](/LICENSE) file for details.
-
 ## Document Control
-
 
 | Version | Date       | Changes                                                       |
 | ------- | ---------- | ------------------------------------------------------------- |
