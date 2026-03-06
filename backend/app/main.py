@@ -5,6 +5,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 warnings.filterwarnings("ignore", message="Pydantic serializer warnings")
+warnings.filterwarnings("ignore", message="Valid config keys have changed in V2")
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
