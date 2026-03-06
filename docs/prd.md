@@ -150,21 +150,76 @@ LiteLLM provides a single interface to 100+ LLM providers:
 - **Third-party**: Prompts are sent to whichever LLM providers are configured (Groq, OpenAI, Anthropic, Google, or internal endpoints)
 - **Recommendation**: Add auth and audit logging before production deployment
 
-## 9. Success Metrics
+## 9. Qualitative Assessment Framework
 
-### 9.1 Technical Metrics
+MooBox supports multiple complementary approaches for evaluating LLM outputs. These range from what is available today to planned capabilities.
+
+### 9.1 Latency Measurement (Implemented)
+
+Real-time performance metrics are measured server-side and displayed per panel after each response completes:
+
+- **Time to First Token (TTFT)**: Milliseconds from request to first streamed token — measures model startup latency
+- **Total Response Time**: Wall-clock duration from request to final token
+- **Token Count**: Number of streamed chunks received (approximates output tokens)
+- **Tokens per Second**: Throughput rate (token_count / total_time)
+
+These metrics appear in the panel header, enabling direct latency comparison between models. The backend emits a `metrics` SSE event at the end of each model's stream containing `ttft_ms`, `total_ms`, `token_count`, and `tokens_per_sec`.
+
+### 9.2 Visual Side-by-Side Comparison (Implemented)
+
+The core evaluation method: users read both responses simultaneously and assess quality, tone, accuracy, and formatting by inspection. Markdown rendering ensures assistant outputs display faithfully (headings, code blocks, tables, lists).
+
+### 9.3 Blind Evaluation / Voting (Planned — Phase 4)
+
+To eliminate name bias ("GPT-4 is probably better"), blind mode would:
+
+- Randomize which model appears in the left vs right panel
+- Hide model names, labeling panels as "Model A" and "Model B"
+- After both responses complete, prompt the user to pick a winner (Left / Right / Tie)
+- Reveal model identities after the vote is submitted
+- Store votes for aggregate win-rate analysis
+
+### 9.4 Parameter Tuning (Planned — Phase 5)
+
+Allow per-model parameter overrides to isolate the effect of settings on output quality:
+
+- Temperature, top-p, max tokens, presence/frequency penalty
+- Custom system prompt per panel
+- This enables "same model, different settings" comparisons alongside "different model" comparisons
+
+### 9.5 Structured Ratings & Export (Planned — Phase 7)
+
+For systematic evaluation campaigns:
+
+- **Per-response ratings**: Thumbs up/down, or Likert scale (1-5) on axes like accuracy, helpfulness, tone, and safety
+- **Annotations**: Free-text notes attached to specific responses
+- **Export**: CSV/JSON export of prompts, responses, ratings, and metadata for offline analysis
+- **Rubrics**: Predefined evaluation criteria that guide raters for consistent scoring
+
+### 9.6 Aggregate Analytics (Planned — Phase 6+)
+
+Once persistence and ratings are in place:
+
+- Win-rate dashboards per model pair
+- TTFT / throughput comparison charts across models
+- Evaluation trends over time (e.g., "Moo 7B v2 improved 15% on coding tasks vs v1")
+- Filter by prompt category, evaluator, or date range
+
+## 10. Success Metrics
+
+### 10.1 Technical Metrics
 
 - Backend health check uptime
 - SSE stream reliability (successful completions vs errors)
 - Time-to-first-token per model (measurable via SSE timestamps)
 
-### 9.2 User Metrics
+### 10.2 User Metrics
 
 - Number of side-by-side comparison sessions (when tracking added)
 - Model pairs most frequently compared
 - Qualitative feedback from evaluation teams (future: structured ratings)
 
-## 10. Phases & Roadmap
+## 11. Phases & Roadmap
 
 
 | Phase       | Scope                                                                 | Status  |
@@ -172,6 +227,7 @@ LiteLLM provides a single interface to 100+ LLM providers:
 | **Phase 1** | Backend scaffold: FastAPI, LiteLLM, model registry, SSE streaming     | Done    |
 | **Phase 2** | Frontend: Next.js, side-by-side UI, SSE client, model selectors       | Done    |
 | **Phase 3** | Docker: Dockerfiles, docker-compose, standalone Next.js output        | Done    |
+| **Phase 3.5** | Latency measurement: TTFT, total time, tokens/sec per panel        | Done    |
 | **Phase 4** | Blind evaluation / voting (hide model names, user picks winner)       | Planned |
 | **Phase 5** | Parameter tuning UI (temperature, top-p, system prompt per model)     | Planned |
 | **Phase 6** | Persistent conversation history (database-backed sessions)            | Planned |
@@ -179,7 +235,7 @@ LiteLLM provides a single interface to 100+ LLM providers:
 | **Phase 8** | Auth / user identity (track who evaluated what)                       | Planned |
 
 
-## 11. Open Questions & Risks
+## 12. Open Questions & Risks
 
 ### Questions Addressed
 
@@ -203,7 +259,7 @@ LiteLLM provides a single interface to 100+ LLM providers:
 | High latency on in-house models | Streaming mitigates perceived wait; show time-to-first-token |
 
 
-## 12. Constraints
+## 13. Constraints
 
 ### Technical Constraints
 
@@ -216,14 +272,14 @@ LiteLLM provides a single interface to 100+ LLM providers:
 - **MVP scope**: Side-by-side comparison only; no evaluation framework yet
 - **Internal tool**: No public-facing deployment; assumes trusted network
 
-## 13. Future Enhancements
+## 14. Future Enhancements
 
 - Blind evaluation mode with anonymous model labeling and voting
 - Parameter tuning panel (temperature, top-p, max tokens, system prompt)
 - Persistent conversation history with session management
 - Structured feedback collection (ratings, annotations, export)
+- Aggregate analytics dashboards (win-rates, latency charts, trends)
 - User authentication and team-based access control
-- Response time metrics and latency comparison visualization
 - Multi-model arena (3+ models simultaneously)
 
 ## AI Assistance Disclosure
@@ -240,9 +296,10 @@ See the [LICENSE](/LICENSE) file for details.
 ## Document Control
 
 
-| Version | Date       | Changes                                                |
-| ------- | ---------- | ------------------------------------------------------ |
-| 0.1.0   | 2026-03-03 | Initial implementation; PRD reflects built v1 features |
+| Version | Date       | Changes                                                       |
+| ------- | ---------- | ------------------------------------------------------------- |
+| 0.1.0   | 2026-03-03 | Initial implementation; PRD reflects built v1 features        |
 | 0.2.0   | 2026-03-05 | Added Groq models, Markdown rendering, streaming fix, logging |
+| 0.3.0   | 2026-03-06 | Added latency measurement; new Section 9 qualitative assessment framework |
 
 
